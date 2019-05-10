@@ -1,34 +1,34 @@
+
 cmake_minimum_required(VERSION 2.8.3)
-project(custom_messages)
+project(first_project)
 
 ## Find catkin and any catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS roscpp rosbag dynamic_reconfigure std_msgs message_generation)
 
-add_message_files(
- FILES
- Num.msg ## include the name of the custom message file (implicit to search in the msg folder)
+add_message_files( ## add custom message files
+  FILES
+  floatStamped.msg 
+)
 
- )
- 
 generate_messages(
-   DEPENDENCIES
+  DEPENDENCIES
   std_msgs  ## in the custom message we use a standard message
- )
+)
 
+generate_dynamic_reconfigure_options( ## must link th dynamic reconfigure file
+  cfg/parameters.cfg
+)
 
 ## Declare a catkin package
-catkin_package( CATKIN_DEPENDS message_runtime)
+catkin_package(
+  CATKIN_DEPENDS message_runtime std_msgs
+)
 
-
-
-
-## Build talker and listener
+## Build the executable
 include_directories(include ${catkin_INCLUDE_DIRS})
+add_executable(node src/node.cpp)
+add_dependencies(node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(node ${catkin_LIBRARIES})
 
 
-add_executable(pub_custom src/pub.cpp)
-target_link_libraries(pub_custom ${catkin_LIBRARIES})
-
-add_executable(sub_custom src/sub.cpp)
-target_link_libraries(sub_custom ${catkin_LIBRARIES})
 
