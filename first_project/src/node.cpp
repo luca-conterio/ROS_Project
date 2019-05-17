@@ -1,189 +1,150 @@
 
 #include <ros/ros.h>
-#include <tf/transform_broadcaster.h>
 #include "std_msgs/String.h"
-#include "std_msgs/Float64.h"
-#include "nav_msgs/Odometry.h"
-#include "geometry_msgs/Quaternion.h"
+#include "first_project/floatStamped.h"
+#include "first_project/odometryMessage.h"
+#include "message_filters/subscriber.h"
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 #include <dynamic_reconfigure/server.h>
 #include <first_project/parametersConfig.h>
-#include "first_project/floatStamped.h"
+
+using namespace ros;
+using namespace first_project;
+using namespace message_filters;
 
 
+typedef struct s_data {
+  double speed_R;
+  double speed_L;
+  double steer;
+  double wheels_angle;
+} sensors_data_type;
+
+typedef struct od_data {
+    double x; 
+    double y;
+    double theta;
+} odometry_data_type;
+
+typedef message_filters::sync_policies::ApproximateTime<floatStamped, floatStamped, floatStamped> SyncPolicy;
 
 
-class PubSub {
-  
-  double speed_R = 0.0;
-  double speed_L = 0.0;
-  double steer = 0.0;
+class Odometry {
+    private:
+        double B = 1.30;
+        double L = 1.765;
+        int STEERING_RATIO = 18;
+        double odometry;
+        int odometry_type;
+        odometry_data_type odometry_data;
 
-  private:
-    ros::Subscriber sub_speed_R;
-    ros::Subscriber sub_speed_L;
-    ros::Subscriber sub_steer;
-    ros::Publisher pub; 
-    //ros::Timer timer;
+    public: Odometry() {
+        odometry_type = 0;
+        odometry_data.x = 0.0;
+        odometry_data.y = 0.0;
+        odometry_data.theta = 0.0;
+    }
 
-  public: PubSub(ros::NodeHandle n) {
-    sub_speed_R = n.subscribe("/speed_R", 1000, &PubSub::callbackSpeedR, this);
-    sub_speed_L = n.subscribe("/speed_L", 1000, &PubSub::callbackSpeedL, this);
-    sub_steer = n.subscribe("/steer", 1000, &PubSub::callbackSteer, this);
-    pub = n.advertise<nav_msgs::Odometry>("/odom", 50);
-    //timer = n.createTimer(ros::Duration(1), &PubSub::timerCallback, this);
-  }  
+    public: void setOdometryType(int od_type) {
+        odometry_type = od_type;
+    }
 
-  void callbackSpeedR(const std_msgs::Float64::ConstPtr& msg) {
-    speed_R = msg->data;
-    //ROS_INFO("Received speed_R: %lf", speed_R);
-  }
+    public: odometry_data_type compute(sensors_data_type sensors_data) {
+        // differential drive kinematics
+        if (odometry_type == 0) {           
+            ROS_INFO("Odometry type: %d (%s)", odometry_type, "Differential_Drive");
+        }
+        // ackerman kinematics
+        else if (odometry_type == 1) {     
+            ROS_INFO("Odometry type: %d (%s)", odometry_type, "Ackerman");
+        }
 
-  void callbackSpeedL(const std_msgs::Float64::ConstPtr& msg) {
-    speed_L = msg->data;
-    //ROS_INFO("Received speed_L: %lf", speed_L);
-  }
+        return odometry_data;
+    }
 
-  void callbackSteer(const std_msgs::Float64::ConstPtr& msg) {
-    steer = msg->data;
-    //ROS_INFO("Received steer: %lf", steer);
-  }
+    public: void resetPosition() {
+        ROS_INFO(" Resetting position to (0,0)");
+        odometry_data.x = 0;
+        odometry_data.y = 0;
+    }
 
-  void publishOdometry(double x, double y, double theta, double vx, double vy, double w, ros::Time current_time) {
-    ROS_INFO("Publishing: %lf - %lf - %lf", x, y, theta);
-    geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(theta);
-    nav_msgs::Odometry odom;
-
-    // set the header
-    odom.header.stamp = current_time;
-    odom.header.frame_id = "odom";
-
-    //set the position
-    odom.pose.pose.position.x = x;
-    odom.pose.pose.position.y = y;
-    odom.pose.pose.position.z = 0.0;
-    odom.pose.pose.orientation = odom_quat;
-
-    //set the velocity
-    odom.child_frame_id = "base_link";
-    odom.twist.twist.linear.x = vx;
-    odom.twist.twist.linear.y = vy;
-    odom.twist.twist.angular.z = w;
-
-    //publish the message
-    pub.publish(odom);
-  }
-
-  void computeKinematicsOdometry() {
-    ROS_INFO("Computing Kinematics Odometry...");
-  }
-
-  void computeAckermannOdometry() {
-    ROS_INFO("Computing Ackermann Odometry...");
-  }
-
-  double getSpeedR() {
-    return speed_R;
-  }
-
-  double getSpeedL() {
-    return speed_L;
-  }
-
-  double getSteer() {
-    return steer;
-  }
-
-  /*void timerCallback(const ros::TimerEvent&) {
-    //pub.publish(odometry);
-    //ROS_INFO("Published odometry value");
-  }
-
-  void setOdometryType(first_project::parametersConfig &config) {
-    odometry_type = config.odometry_type.c_str();
-  }
-  */
+    public: void setPosition(int x_pos, int y_pos) {
+        ROS_INFO(" Setting position to (%d,%d)", x_pos, y_pos);
+        odometry_data.x = x_pos;
+        odometry_data.y = y_pos;
+    }
 };
 
 
+void synchronizedCallback(sensors_data_type *s_data, const floatStampedConstPtr& msg1, const floatStampedConstPtr& msg2, const floatStampedConstPtr& msg3) {
+    s_data->speed_R = msg1->data;    
+    s_data->speed_L = msg2->data;
+    s_data->steer = msg3->data;
+    s_data->wheels_angle = s_data->steer / 18;
+    ROS_INFO("\n\n ------- Received ------- \n speed_R: %lf \n speed_L: %lf \n steer: %lf \n wheels_angle: %lf \n ------------------------\n", s_data->speed_R, s_data->speed_L, s_data->steer, s_data->wheels_angle);
+}                
 
-void parametersServerCallback(int *od_type, first_project::parametersConfig &config, uint32_t level) {
-  ROS_INFO("Reconfigure Request: %d", config.odometry_type);
-  *od_type = config.odometry_type;
-  //ROS_INFO ("%d", level);
+void publishOdometry(ros::Publisher pub, odometry_data_type od_data) {
+    odometryMessage msg;
+    msg.x = od_data.x;
+    msg.y = od_data.y;
+    msg.theta = od_data.theta;
+    ROS_INFO("\n\n ------- Publishing ------- \n x: %lf \n y: %lf \n theta: %lf \n ------------------------\n", msg.x, msg.y, msg.theta);
+    pub.publish(msg);
 }
 
-void computeOdometry(PubSub *pubsub, int od_type) {
-      if (od_type == 0) {
-        ROS_INFO("Odometry type: %d (%s)", od_type, "kinematics");
-        pubsub->computeKinematicsOdometry();
-      }
-      else if (od_type == 1) {
-        ROS_INFO("Odometry type: %d (%s)", od_type, "akermann");
-        pubsub->computeAckermannOdometry();
-      }
+void parameterServerCallback(Odometry *odometry, parametersConfig config) {
+    odometry->setOdometryType(config.odometry_type);
+    if (config.reset_position == true)
+        if (config.x_pos == 0 and config.y_pos == 0)
+            odometry->resetPosition();
+        else 
+            odometry->setPosition(config.x_pos, config.y_pos);
 }
-
-
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "main");
 
-  //rosbag::Bag bag;
-  //bag.open("bag_1.bag", rosbag::bagmode::Read);
+    ros::init(argc, argv, "main_node");
 
-  int odometry_type;
-  ros::NodeHandle n; 
-  PubSub *pubsub = new PubSub(n);
-  dynamic_reconfigure::Server<first_project::parametersConfig> parameterServer;
-  dynamic_reconfigure::Server<first_project::parametersConfig>::CallbackType callbackFunction;
-  callbackFunction = boost::bind(&parametersServerCallback, &odometry_type, _1, _2);
-  parameterServer.setCallback(callbackFunction);
+    Odometry *odometry = new Odometry();
+    sensors_data_type sensors_data;
+    odometry_data_type odometry_data;
+    odometryMessage odometry_msg;
 
-  double x = 0.0;
-  double y = 0.0;
-  double angle = 0.0;
+    ros::NodeHandle n; 
+    ros::Publisher pub = n.advertise<odometryMessage>("/odom", 50);
+    message_filters::Subscriber<floatStamped> sub_speed_R(n, "/speedR_stamped", 1);
+    message_filters::Subscriber<floatStamped> sub_speed_L(n, "/speedL_stamped", 1);
+    message_filters::Subscriber<floatStamped> sub_steer(n, "/steer_stamped", 1);
+    Synchronizer<SyncPolicy> sync(SyncPolicy(10), sub_speed_R, sub_speed_L, sub_steer);
+    sync.registerCallback(boost::bind(&synchronizedCallback, &sensors_data, _1, _2, _3));
+    //PubSub *pubsub = new PubSub(n, /*sub_speed_R, sub_speed_L, sub_steer,*/ sync);
 
-  ROS_INFO("Spinning node");
-  ros::Time current_time, last_time;
-  current_time = ros::Time::now();
-  last_time = ros::Time::now();
+    dynamic_reconfigure::Server<parametersConfig> parameterServer;
+    parameterServer.setCallback(boost::bind(&parameterServerCallback, odometry, _1));
 
-  ros::Rate rate(1.0);
+    ROS_INFO("Spinning node");
+    Time current_time, last_time;
+    current_time = Time::now();
+    last_time = Time::now();
 
-  while(n.ok()) {
-    
-    ros::spinOnce();
-    current_time = ros::Time::now();
+    Rate rate(1.0);
 
-    computeOdometry(pubsub, odometry_type);
+    while(ros::ok()) {
 
-    double speedR = pubsub->getSpeedR();
-    double speedL = pubsub->getSpeedL();
-    double angle = pubsub->getSteer();
+        spinOnce();
+        current_time = Time::now();
 
-    ROS_INFO("Received speed_R: %lf", speedR);
-    ROS_INFO("Received speed_L: %lf", speedL);
-    ROS_INFO("Received steer: %lf", angle);
+        /*
+            COMPUTATION
+        */
+        odometry_data = odometry->compute(sensors_data);
+        publishOdometry(pub, odometry_data);
 
-    double w = (speedR - speedL) / 2.0;
-    double v = (speedR + speedL) / 2.0;
-    double vx = v * cos(angle);
-    double vy = v * sin(angle);
-    double dt = (current_time - last_time).toSec();
+        last_time = current_time;
+        rate.sleep();
+    }
 
-    double delta_x = vx * dt;
-    double delta_y = vy * dt;
-    double delta_angle = w * dt;
-
-    x += delta_x;
-    y += delta_y;
-    angle += delta_angle;
-
-    pubsub->publishOdometry(x, y, angle, vx, vy, w, current_time);
-
-    last_time = current_time;
-    rate.sleep();
-  }
-
-  return 0;
+    return 0;
 }

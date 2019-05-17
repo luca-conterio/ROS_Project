@@ -10,11 +10,14 @@ find_package(
   dynamic_reconfigure 
   std_msgs 
   nav_msgs 
-  message_generation)
+  message_generation
+  message_filters
+)
 
 add_message_files( ## add custom message files
   FILES
-  floatStamped.msg 
+  floatStamped.msg
+  odometryMessage.msg
 )
 
 generate_messages(
@@ -29,10 +32,11 @@ generate_dynamic_reconfigure_options( ## must link th dynamic reconfigure file
 )
 
 ## Declare a catkin package
-catkin_package(
+catkin_package (
   CATKIN_DEPENDS 
   message_runtime 
   std_msgs
+  message_filters
 )
 
 ## Build the executable
