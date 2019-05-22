@@ -12,6 +12,7 @@ find_package(
   nav_msgs 
   message_generation
   message_filters
+  tf
 )
 
 add_message_files( ## add custom message files
