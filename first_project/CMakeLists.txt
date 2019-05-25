@@ -23,9 +23,8 @@ add_message_files( ## add custom message files
 
 generate_messages(
   DEPENDENCIES
-  std_msgs  ## in the custom message we use a standard message
+  std_msgs
   nav_msgs
-  geometry_msgs
 )
 
 generate_dynamic_reconfigure_options( ## must link th dynamic reconfigure file
