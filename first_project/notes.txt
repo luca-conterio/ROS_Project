@@ -1,0 +1,85 @@
+﻿#####################
+#   GROUP MEMBERS   #
+#####################
+
+-----------------------
+     Luca Conterio
+-----------------------
+Codice Persona: 10498418 
+Matricola: 920261
+
+-----------------------
+   Giulio Cristofaro
+-----------------------
+Codice Persona: 10555172
+Matricola: 876730
+
+-----------------------
+    Andrea Ferraris
+-----------------------
+Codice Persona: 10580132
+Matricola: 867817
+
+#########################
+#   PROJECT STRUCTURE   #
+#########################
+
+first_project
+   ├── cfg
+   │   └── parameters.cfg
+   ├── CMakeLists.txt
+   ├── launch
+   │   └── first_project.launch
+   ├── msg
+   │   ├── floatStamped.msg
+   │   └── odometryMessage.msg
+   ├── package.xml
+   └── src
+       └── node.cpp
+
+--------------
+    NODES
+--------------
+we produced a single node that subscribes to the needed topics (/speedR_stamped, /speedL_stamped, /steer_stamped)
+and also publishes odometry data after computation. Odometry data is published with a standard nav_msgs::Odometry message 
+(useful to be plotted for visualization), a custom first_project::odometryMessage, that contains odometry data along with 
+the odometry type ("Differential_Drive" or "Ackermann"), and as tf transform.
+
+---------------
+   MESSAGES
+---------------
+In the msg folder two message types are contained. 
+- floatStamped: used to subscribe to car sensors data, since those data use this type of message.
+- odometryMessage: used by the node to publish odometry data along with the odometry type used in the computation (that can
+be either "Differential_Drive" and "Ackermann"). So it contains a nav_msgs::Odometry field called "odometry" and a string field 
+called "source_type".
+
+Messages are published onto two topics:
+- nav_msgs::Odometry messages are published onto /car_odometry topic.
+- first_project::odometryMessage messages are published onto /car_odometry_with_type topic (custom message type).
+
+-------------
+   LAUNCH   
+-------------
+A simple launch file is provided to start the ros node.
+
+--------------------
+   CONFIGURATION
+--------------------
+Cfg directory contains a parameters.cfg file with the specification of a ParameterGenerator. It is used
+in the node to instantiate a dynamice_reconfigure::Server to allow dynamic reconfiguration of the robot position (x,y).
+
+Dynamic reconfigure: it is used to set the robot position to an arbitrary position (x,y). 
+The parameters to be modified to set the position are: x_pos and y_pos. After you have set x_pos and y_pos to the requested values, if you set
+the reset_position parameter to "true" the dynamic_reconfigure::Server callback function is called, setting the robot position to the requested one.
+NOTE: the reconfiguration is performed only if reset_position parameter is set to "true". So when the reset_position parameter is set to "true", 
+it acts as a sort of button (even if in rqt_reconfigure it appears as a checkbox) that modifies the current robot position. It is useful to set x_pos
+and y_pos to the desired ones, then set reset_position to "true" to update the robot position and put reset_position to "false" before setting
+x_pos and y_pos to other values, repeating the procedure.
+
+#########################
+#   TF-TREE STRUCTURE   #
+#########################
+
+
+
