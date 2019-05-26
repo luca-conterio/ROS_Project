@@ -52,10 +52,11 @@ As a result odometry data messages are published onto two topics:
 ### Configuration and Parameters
 The `cfg` directory contains a `parameters.cfg` file with the specification of a `ParameterGenerator`.  
 It is used in the node to instantiate a `dynamice_reconfigure::Server` to allow dynamic reconfiguration of the robot position (x,y).  
-Three parameters have been defined:
+Four parameters have been defined:
   * `x_pos`: it respresents the robot's x coordinate.
   * `y_pos`: it represents the robot's y coordinate.
   * `reset_position`: it is used to enable the user to set the robot's position to a desired value (x,y).
+  * `odometry_type`: it is used to change the type of odometry (`0` for `Differential_Drive` and `1` for `Ackermann`).
 
 ### Dynamic Reconfigure
 It is used to set/reset the robot position to an arbitrary position (x,y). 
