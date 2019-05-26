@@ -64,7 +64,10 @@ The parameters to be modified to set the position are: `x_pos` and `y_pos`. Afte
   
 We decided not to reset the orientation to a specified value nor to 0 when a dynamic reconfiguration of robot position is performed, so the node continues computing the odometry based on the previoused computed orientation, also after a reset of its position (x,y).  
   
-**NOTE**: the reconfiguration is performed only if `reset_position` parameter is set to `true`, so it acts as a sort of button (even if in `rqt_reconfigure` it appears as a checkbox) that modifies the current robot position. It is useful to set `x_pos` and `y_pos` to the desired ones, then set `reset_position` to `true` to update the robot position and put `reset_position` to `false` again before setting the position to a new value, repeating the procedure.
+**NOTE**: the reconfiguration is performed only if `reset_position` parameter is set to `true`, so it acts as a sort of button (even if in `rqt_reconfigure` it appears as a checkbox) that modifies the current robot position. It is useful to set `x_pos` and `y_pos` to the desired ones, then set `reset_position` to `true` to update the robot position and put `reset_position` to `false` again before setting the position to a new value, repeating the procedure.  
+  
+For what concerns changing the odometry computation type, it can be done simple changing the `odometry_type` dropdown menu,
+selecting the desired odometry type.
 
 ### Tf Tree Structure
 Odometry data is published also as a tf transform through a `tf::TransformBroadcaster`.  
