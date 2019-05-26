@@ -79,7 +79,7 @@ Three parameters have been defined:
   * x_pos: it respresents the robot's x coordinate.
   * y_pos: it represents the robot's y coordinate.
   * reset_position: it is used to enable the user to set the robot's position to a desired value (x,y).
-
+  * odometry_type: it is used to change the type of odometry (0 for Differential_Drive and 1 for Ackermann).
 
 ###########################
 #   DYNAMIC RECONFIGURE   #
@@ -96,7 +96,10 @@ reset of its position (x,y).
 **NOTE**: the reconfiguration is performed only if reset_position parameter is set to "true", so it acts as a sort of 
 button (even if in rqt_reconfigure it appears as a checkbox) that modifies the current robot position. It is useful 
 to set x_pos and y_pos to the desired ones, then set reset_position to "true" to update the robot position and 
-put reset_position to "false" again before setting the position to a new value, repeating the procedure.
+put reset_position to "false" again before setting the position to a new value, repeating the procedure.  
+  
+For what concerns changing the odometry computation type, it can be done simple changing the odometry_type dropdown menu,
+selecting the desired odometry type.
 
 #########################
 #   TF TREE STRUCTURE   #
