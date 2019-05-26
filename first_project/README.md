@@ -1,6 +1,8 @@
-# First ROS Project
-
-The goal of this simple project is to retrieve data from a bag recorded through sensors of an autonomous car and compute its odometry, both using **Differential Drive** approximation and **Ackermann** odometry.
+# Autonomous Car Odometry 
+First Robotics Project - Politecnico di Milano 2018/2019  
+  
+The goal of this simple project is to retrieve data from a bag recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** approximation and **Ackermann** odometry.  
+It uses **ROS (Robot Operating System)** to retrieve data, to compute the odometry and to publish the results.
 
 ### Project Structure
 ```
@@ -45,8 +47,8 @@ As a result odometry data messages are published onto two topics:
 The `cfg` directory contains a `parameters.cfg` file with the specification of a `ParameterGenerator`.  
 It is used in the node to instantiate a `dynamice_reconfigure::Server` to allow dynamic reconfiguration of the robot position (x,y).  
 Three parameters have been defined:
-  * `x_pos`: it respresents the robot's x position.
-  * `y_pos`: it represents the robot's x position.
+  * `x_pos`: it respresents the robot's x coordinate.
+  * `y_pos`: it represents the robot's y coordinate.
   * `reset_position`: it is used to enable the user to set the robot's position to a desired value (x,y).
 
 ### Dynamic Reconfigure
@@ -59,7 +61,7 @@ We decided not to reset the orientation to a specified value nor to 0 when a dyn
 
 ### Tf Tree Structure
 Odometry data is published also as a tf transform through a `tf::TransformBroadcaster`.  
-This is the tf tree structure, where `odom` is the parent frame, while `car` is the robot (car) frame:  
+This is the tf tree structure, where `odom` is the parent frame, while `car` is the robot's frame:  
 ```
     __________
    /          \

@@ -76,8 +76,8 @@ The cfg directory contains a parameters.cfg file with the specification of a Par
 It is used in the node to instantiate a dynamice_reconfigure::Server to allow dynamic reconfiguration of the robot 
 position (x,y).  
 Three parameters have been defined:
-  * x_pos: it respresents the robot's x position.
-  * y_pos: it represents the robot's x position.
+  * x_pos: it respresents the robot's x coordinate.
+  * y_pos: it represents the robot's y coordinate.
   * reset_position: it is used to enable the user to set the robot's position to a desired value (x,y).
 
 
@@ -102,7 +102,7 @@ put reset_position to "false" again before setting the position to a new value, 
 #   TF TREE STRUCTURE   #
 #########################
 Odometry data is published also as a tf transform through a tf::TransformBroadcaster.
-This is the tf tree structure, where "odom" is the parent frame, while "car" is the robot (car) frame:
+This is the tf tree structure, where "odom" is the parent frame, while "car" is the robot's frame:
     __________
    /          \
   |    odom    |
