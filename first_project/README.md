@@ -42,7 +42,7 @@ Data from the bag file are published on three topics:
   * `/steer_stamped`: here the steering angle is published (in degrees).
   
 In the `msg` folder two custom message definitions are contained:
-  * `floatStamped.msg`: used to subscribe to car sensors data, since bag data are formatted as this message type.
+  * `floatStamped.msg`: used to subscribe to car sensors data, since bag files data are formatted as this message type.
   * `odometryMessage.msg`: used by the node to publish odometry data along with the odometry type used in the computation (that can be either "Differential_Drive" or "Ackermann"). So it contains a nav_msgs::Odometry field called "odometry" and a string field called "source_type".  
   
 Besides these two custom message types, the node uses nav_msgs::Odometry to publish odometry data in a standard way, so that it is simpler to plot those data for trajectory visualization.  
