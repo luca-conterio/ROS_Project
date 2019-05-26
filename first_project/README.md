@@ -1,8 +1,9 @@
 # Autonomous Car Odometry 
 First Robotics Project - Politecnico di Milano 2018/2019  
   
-The goal of this simple project is to retrieve data from a bag recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** approximation and **Ackermann** odometry.  
-It uses **ROS (Robot Operating System)** to retrieve data, to compute the odometry and to publish the results.
+### Overview
+The goal of this simple project is to retrieve data from a bag recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackermann** model.  
+It uses **ROS (Robot Operating System)** to retrieve the data, to compute the odometry and to publish the results.
 
 ### Project Structure
 ```
@@ -19,9 +20,14 @@ first_project
    └── src  
        └── node.cpp  
 ```
+### Car Parameters:
+  * **Rear wheels baseline**: `130 cm`.
+  * **Distance between front and rear wheels**: `176.5 cm`.
+  * the car has a **steering ratio** equal to `18`.
 
 ### Nodes
-A single node subscribes to the needed topics (`/speedR_stamped`, `/speedL_stamped`, `/steer_stamped`) and also publishes odometry data after computation. Odometry data is published with a standard `nav_msgs::Odometry` message (useful to be plotted for visualization), a custom `first_project::odometryMessage`, that contains odometry data along with the odometry type (`Differential_Drive` or `Ackermann`), and as tf transform.
+A single node subscribes to the needed topics (`/speedR_stamped`, `/speedL_stamped`, `/steer_stamped`).  
+It also publishes odometry data after computation. Odometry data is published with a standard `nav_msgs::Odometry` message (useful to be plotted for visualization), a custom `first_project::odometryMessage`, that contains odometry data along with the odometry type (`Differential_Drive` or `Ackermann`), and as tf transform.
 
 ### Launch
 A simple launch file is provided to start the ros node.  
@@ -29,9 +35,9 @@ Simply use `roslaunch first_project.launch` to run it.
 
 ### Messages and Topics
 Data from the bag file are published on three topics:
-  * `/speedR_stamped`: here the speed of the right wheel is published.
-  * `/speedL_stamped`: here the speed of the left wheel is published.
-  * `/steer_stamped`: here the steering angle is published (the car has a **steering ratio** equal to `18`).
+  * `/speedR_stamped`: here the speed of the right wheel is published (in `m/s`).
+  * `/speedL_stamped`: here the speed of the left wheel is published (in `m/s`).
+  * `/steer_stamped`: here the steering angle is published (in degrees).
   
 In the `msg` folder two custom message definitions are contained:
   * `floatStamped.msg`: used to subscribe to car sensors data, since those data are formatted as this type of message.
