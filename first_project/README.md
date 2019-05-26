@@ -2,7 +2,7 @@
 First Robotics Project - Politecnico di Milano 2018/2019  
   
 ### Overview
-The goal of this simple project is to retrieve data from a bag recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackermann** model.  
+The goal of this simple project is to retrieve data from a bag file recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackermann** model.  
 It uses **ROS (Robot Operating System)** to retrieve the data, to compute the odometry and to publish the results.
 
 ### Project Structure
@@ -11,8 +11,10 @@ first_project
    ├── cfg  
    │   └── parameters.cfg  
    ├── CMakeLists.txt. 
-   ├── launch  
-   │   └── first_project.launch  
+   ├── launch 
+   |   ├── first_project.launch 
+   |   ├── bag_1.bag
+   │   └── bag_2.bag
    ├── msg  
    │   ├── floatStamped.msg  
    │   └── odometryMessage.msg  
@@ -30,8 +32,8 @@ A single node subscribes to the needed topics (`/speedR_stamped`, `/speedL_stamp
 It also publishes odometry data after computation. Odometry data is published with a standard `nav_msgs::Odometry` message (useful to be plotted for visualization), a custom `first_project::odometryMessage`, that contains odometry data along with the odometry type (`Differential_Drive` or `Ackermann`), and as tf transform.
 
 ### Launch
-A simple launch file is provided to start the ros node.  
-Simply use `roslaunch first_project.launch` to run it.
+A simple launch file is provided to start the ros node. Simply use `roslaunch first_project.launch` to run it.  
+If you want to reproduce the bag files provided, simply use `rosbag play <bag-files>`.
 
 ### Messages and Topics
 Data from the bag file are published on three topics:
@@ -40,7 +42,7 @@ Data from the bag file are published on three topics:
   * `/steer_stamped`: here the steering angle is published (in degrees).
   
 In the `msg` folder two custom message definitions are contained:
-  * `floatStamped.msg`: used to subscribe to car sensors data, since those data are formatted as this type of message.
+  * `floatStamped.msg`: used to subscribe to car sensors data, since bag data are formatted as this message type.
   * `odometryMessage.msg`: used by the node to publish odometry data along with the odometry type used in the computation (that can be either "Differential_Drive" or "Ackermann"). So it contains a nav_msgs::Odometry field called "odometry" and a string field called "source_type".  
   
 Besides these two custom message types, the node uses nav_msgs::Odometry to publish odometry data in a standard way, so that it is simpler to plot those data for trajectory visualization.  
