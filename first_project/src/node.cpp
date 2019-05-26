@@ -120,7 +120,7 @@ void publishOdometry(ros::Publisher pub, ros::Publisher pub_with_type,
     tf::Quaternion q;
     q.setRPY(0, 0, od_data.theta);
     transform.setRotation(q);
-    odom_broadcaster.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "robot_frame"));
+    odom_broadcaster.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "car"));
     
     // fill the odometry message with data
     odom.header.stamp = od_data.current_time;
