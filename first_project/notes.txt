@@ -62,7 +62,7 @@ Used to subscribe to car sensors data, since those data are formatted as this ty
    odometryMessage.msg
 -------------------------
 Used by the node to publish odometry data along with the odometry type used in the computation (that can
-be either "Differential_Drive" and "Ackermann"). So it contains a nav_msgs::Odometry field called "odometry" and a string field 
+be either "Differential_Drive" or "Ackermann"). So it contains a nav_msgs::Odometry field called "odometry" and a string field 
 called "source_type".
 
 A part from these two custom message types, the node uses nav_msgs::Odometry to publish odometry data in a standard way, so that
