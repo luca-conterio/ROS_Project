@@ -34,7 +34,7 @@ It also publishes odometry data after computation. Odometry data is published wi
 ## Launch
 Two simple launch files are provided: 
   * Simply use `roslaunch first_project.launch` to run the node. Then if you want to reproduce the provided bag files, you can use `rosbag play <bag-files>`.
-  * In case you want to run both the node and the bag file at the sime time, you can launch the `first_project_with_bag.launch` file.  
+  * In case you want to run both the node and the bag files at the sime time, you can launch the `first_project_with_bag.launch` file. Both bag files will be reproduced in this way.  
 
 ## Messages and Topics
 Data from the bag file is published onto three topics, that are used for the computation:
