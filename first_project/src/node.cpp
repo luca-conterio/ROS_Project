@@ -50,7 +50,7 @@ typedef message_filters::sync_policies::ApproximateTime<floatStamped, floatStamp
 // class used to computed odometry and store data (position, velocities, etc...)
 class Odometry {
     private:
-        // used to distinguish differential drive and ackermann odometry
+        // used to distinguish differential drive and ackerman odometry
         int odometry_type;
         odometry_data_type odometry_data;
         Time last_time;
@@ -73,22 +73,23 @@ class Odometry {
     public: odometry_data_type compute(sensors_data_type s_data, Time current_time) {
         double dt = (current_time - last_time).toSec();
         odometry_data.v = (s_data.speed_R + s_data.speed_L) / 2.0;
-        odometry_data.vx = odometry_data.v * cos(odometry_data.theta);
-        odometry_data.vy = odometry_data.v * sin(odometry_data.theta);
-        odometry_data.x = odometry_data.x + (odometry_data.vx * dt);
-        odometry_data.y = odometry_data.y + (odometry_data.vy * dt);
         // differential drive kinematics
         if (odometry_type == 0) {           
             ROS_INFO("Odometry type: %d (%s)", odometry_type, "Differential Drive");
             strcpy(odometry_data.source_type, "Differential_Drive");
             odometry_data.vth = (s_data.speed_R - s_data.speed_L) / baseline;
         }
-        // ackermann kinematics
+        // ackerman kinematics
         else if (odometry_type == 1) {     
-            ROS_INFO("Odometry type: %d (%s)", odometry_type, "Ackermann");
-            strcpy(odometry_data.source_type, "Ackermann");
+            ROS_INFO("Odometry type: %d (%s)", odometry_type, "ackerman");
+            strcpy(odometry_data.source_type, "ackerman");
             odometry_data.vth = (odometry_data.v / front_rear_wheels_distance) * tan(s_data.wheels_angle);
         }
+
+        odometry_data.x = odometry_data.x + odometry_data.v * dt * cos(odometry_data.theta + (odometry_data.vth * dt) / 2);
+        odometry_data.y = odometry_data.y + odometry_data.v * dt * sin(odometry_data.theta + (odometry_data.vth * dt) / 2);
+        //odometry_data.x = odometry_data.x + (odometry_data.vx * dt);
+        //odometry_data.y = odometry_data.y + (odometry_data.vy * dt);
         odometry_data.theta = odometry_data.theta + (odometry_data.vth * dt);
         odometry_data.current_time  = current_time;
         last_time = current_time;

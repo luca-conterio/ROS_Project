@@ -1,3 +1,4 @@
 <launch>
     <node pkg="first_project" name="node" type="node" output="screen"/>
+    <node pkg="rosbag" type="play" name="rosbag" args="$(find first_project)/launch/bag_2.bag"/>
 </launch>

@@ -2,7 +2,7 @@
 First Robotics Project - Politecnico di Milano 2018/2019  
   
 ## Overview
-The goal of this simple project is to retrieve data from a bag file recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackermann** model.  
+The goal of this simple project is to retrieve data from a bag file recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackerman** model.  
 It uses **ROS (Robot Operating System)** to retrieve the data, to compute the odometry and to publish the results.
 
 ## Project Structure
@@ -29,7 +29,7 @@ first_project
 
 ## Nodes
 A single node subscribes to the needed topics (`/speedR_stamped`, `/speedL_stamped`, `/steer_stamped`).  
-It also publishes odometry data after computation. Odometry data is published with a standard `nav_msgs::Odometry` message (useful to be plotted for visualization), a custom `first_project::odometryMessage`, that contains odometry data along with the odometry type (`Differential_Drive` or `Ackermann`), and as tf transform.
+It also publishes odometry data after computation. Odometry data is published with a standard `nav_msgs::Odometry` message (useful to be plotted for visualization), a custom `first_project::odometryMessage`, that contains odometry data along with the odometry type (`Differential_Drive` or `Ackerman`), and as tf transform.
 
 ## Launch
 Two simple launch files are provided: 
@@ -48,7 +48,7 @@ The same data, without timestamps, is published also onto other three topics: `/
   
 In the `msg` folder two custom message definitions are contained:
   * `floatStamped.msg`: used to subscribe to car sensors data (through the above described topics), since bag files data is formatted as this message type.
-  * `odometryMessage.msg`: used by the node to publish odometry data along with the odometry type used in the computation (that can be either `Differential_Drive` or `Ackermann`). So it contains a `nav_msgs::Odometry` field called `odometry` and a string field called `source_type`.  
+  * `odometryMessage.msg`: used by the node to publish odometry data along with the odometry type used in the computation (that can be either `Differential_Drive` or `Ackerman`). So it contains a `nav_msgs::Odometry` field called `odometry` and a string field called `source_type`.  
   
 Besides these two custom message types, the node uses `nav_msgs::Odometry` to publish odometry data in a standard way, so that it is simpler to plot those data for trajectory visualization.  
   
@@ -92,6 +92,17 @@ This is the tf tree structure, where `odom` is the parent frame, while `car_fram
 
 ```
 
+## Odometry Computation
+To have a better approximation of the real values, the odometry is computed according to the Rugge-Kutta integration, instead of the Euler's one:
+```
+x_k+1 = x_k + v * dt * cos(theta_k + (w_k * dt) / 2)  
+y_k+1 = y_k + v * dt * sin(theta_k + (w_k * dt) / 2)  
+theta_k+1 = theta_k + (w_k * dt)  
+dt = T_k+1 - T_k
+```
+where `k` indicates the current iteration and `k+1` the following one, `dt` the elapsed time between the two consecutive iterations and `w` the angular velocity.
+The angular velocity is instead computed according to the selected odometry type (differential drive or Ackerman).
+
 ## Configuration and Parameters
 The `cfg` directory contains a `parameters.cfg` file with the specification of a `ParameterGenerator`.  
 It is used in the node to instantiate a `dynamice_reconfigure::Server` to allow dynamic reconfiguration of the robot position `(x,y)`.  
@@ -99,7 +110,7 @@ Four parameters have been defined:
   * `x_pos`: it respresents the robot's x coordinate.
   * `y_pos`: it represents the robot's y coordinate.
   * `reset_position`: it is used to enable the user to set the robot's position to a desired value `(x,y)`.
-  * `odometry_type`: it is used to change the type of odometry (`0` for `Differential_Drive` and `1` for `Ackermann`).
+  * `odometry_type`: it is used to change the type of odometry (`0` for `Differential_Drive` and `1` for `Ackerman`).
 
 #### Dynamic Reconfigure
 The `dynamic_reconfigure` package is used to set/reset the robot position to an arbitrary value `(x,y)`. 
@@ -108,8 +119,9 @@ After you have set the position to the requested one, if you set the `reset_posi
   
 We decided not to reset the orientation to a specified value nor to 0 when a dynamic reconfiguration of robot position is performed, so the node continues computing the odometry based on the previously computed orientation, also after a reset of its position `(x,y).`  
   
-**NOTE**: the reconfiguration is performed only if `reset_position` parameter is set to `true`. This paramter acts as a sort of button (in `rqt_reconfigure` it appears as a checkbox) that modifies the current robot position. It is useful to set `x_pos` and `y_pos` to the desired ones, then set `reset_position` to `true` to update the robot position and put `reset_position` to `false` again before setting the position to a new value, repeating the procedure.  
+**NOTE**: the reconfiguration is performed only if `reset_position` parameter is set to `true`. This paramter acts as a sort of "button" (in `rqt_reconfigure` it appears as a checkbox) that modifies the current robot position. It is useful to set `x_pos` and `y_pos` to the desired ones, then set `reset_position` to `true` to update the robot position and put `reset_position` to `false` again before setting the position to a new value, repeating the procedure. This allows you to update the position "in one shot".  
   
-For what concerns changing the odometry computation type, it can be done simple changing the `odometry_type` parameter value (dropdown menu in `rqt_reconfigure`), selecting the desired odometry type.
-
+For what concerns changing the odometry computation type, it can be done simple changing the `odometry_type` parameter value (dropdown menu in `rqt_reconfigure`), selecting the desired odometry type.  
+  
+**NOTE**: of course, if you change the odometry type while `reset_position` is set to `true`, the callback function for the `ParameterServer` will be called and also the position will be updated to the value of `x_pos` and `y_pos`. It is more usefule to change the odometry type when `reset_position` is set to `false`, so that only the odometry type will be changed.
 
