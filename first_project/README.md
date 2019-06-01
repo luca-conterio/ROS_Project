@@ -93,7 +93,7 @@ This is the tf tree structure, where `odom` is the parent frame, while `car_fram
 ```
 
 ## Odometry Computation
-To have a better approximation of the real values, the odometry is computed according to the Rugge-Kutta integration, instead of the Euler's one:
+To have a better approximation of the real values, the odometry is computed according to the Runge-Kutta integration, instead of the Euler's one:
 ```
 x_k+1 = x_k + v * dt * cos(theta_k + (w_k * dt) / 2)  
 y_k+1 = y_k + v * dt * sin(theta_k + (w_k * dt) / 2)  
@@ -121,7 +121,7 @@ We decided not to reset the orientation to a specified value nor to 0 when a dyn
   
 **NOTE**: the reconfiguration is performed only if `reset_position` parameter is set to `true`. This paramter acts as a sort of "button" (in `rqt_reconfigure` it appears as a checkbox) that modifies the current robot position. It is useful to set `x_pos` and `y_pos` to the desired ones, then set `reset_position` to `true` to update the robot position and put `reset_position` to `false` again before setting the position to a new value, repeating the procedure. This allows you to update the position "in one shot".  
   
-For what concerns changing the odometry computation type, it can be done simple changing the `odometry_type` parameter value (dropdown menu in `rqt_reconfigure`), selecting the desired odometry type.  
+For what concerns changing the odometry computation type, it can be done simply changing the `odometry_type` parameter value (dropdown menu in `rqt_reconfigure`), selecting the desired odometry type.  
   
 **NOTE**: of course, if you change the odometry type while `reset_position` is set to `true`, the callback function for the `ParameterServer` will be called and also the position will be updated to the value of `x_pos` and `y_pos`. It is more usefule to change the odometry type when `reset_position` is set to `false`, so that only the odometry type will be changed.
 

@@ -61,11 +61,10 @@ class Odometry {
         odometry_data.y = 0.0;
         odometry_data.theta = 0.0;
         odometry_data.v = 0.0;
-        odometry_data.vx = 0.0;
-        odometry_data.vy = 0.0;
         odometry_data.vth = 0.0;
     }
 
+    // change odometry type /differential drive or ackerman
     public: void setOdometryType(int od_type) {
         odometry_type = od_type;
     }
@@ -85,17 +84,15 @@ class Odometry {
             strcpy(odometry_data.source_type, "ackerman");
             odometry_data.vth = (odometry_data.v / front_rear_wheels_distance) * tan(s_data.wheels_angle);
         }
-
         odometry_data.x = odometry_data.x + odometry_data.v * dt * cos(odometry_data.theta + (odometry_data.vth * dt) / 2);
         odometry_data.y = odometry_data.y + odometry_data.v * dt * sin(odometry_data.theta + (odometry_data.vth * dt) / 2);
-        //odometry_data.x = odometry_data.x + (odometry_data.vx * dt);
-        //odometry_data.y = odometry_data.y + (odometry_data.vy * dt);
         odometry_data.theta = odometry_data.theta + (odometry_data.vth * dt);
         odometry_data.current_time  = current_time;
         last_time = current_time;
         return odometry_data;
     }
 
+    // set the robot position to the given one
     public: void setPosition(int x_pos, int y_pos) {
         ROS_INFO(" Setting position to (%d,%d)", x_pos, y_pos);
         odometry_data.x = x_pos;
@@ -132,13 +129,13 @@ void publishOdometry(ros::Publisher pub, ros::Publisher pub_with_type,
     odom.pose.pose.position.z = 0.0;
     odom.pose.pose.orientation = odom_quat;
     // set the velocity
-    odom.child_frame_id = "base_link";
-    odom.twist.twist.linear.x = od_data.vx;
-    odom.twist.twist.linear.y = od_data.vy;
+    odom.child_frame_id = "car_frame";
+    odom.twist.twist.linear.x = od_data.v * cos(od_data.theta);
+    odom.twist.twist.linear.y = od_data.v * sin(od_data.theta);
     odom.twist.twist.angular.z = od_data.vth;
 
     ROS_INFO("\n\n ------- Publishing ------- \n x: %lf \n y: %lf \n theta: %lf \n vx: %lf \n vy: %lf \n vth: %lf \n --------------------------\n", 
-                                                        od_data.x, od_data.y, od_data.theta, od_data.vx, od_data.vy, od_data.vth);
+                                                        od_data.x, od_data.y, od_data.theta, od_data.v * cos(od_data.theta), od_data.v * sin(od_data.theta), od_data.vth);
     // publish a nav_msgs::Odometry message
     pub.publish(odom);
 
