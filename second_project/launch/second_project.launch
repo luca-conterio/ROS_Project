@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="second_project" name="odometry_node" type="odometry_node" output="screen"/>
+    <node pkg="rosbag" type="play" name="rosbag" args="$(find second_project)/launch/bag.bag"/>
+</launch>
