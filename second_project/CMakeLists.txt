@@ -18,9 +18,9 @@ catkin_package(
 
 ## Build the executable
 include_directories(include ${catkin_INCLUDE_DIRS})
-add_executable(oodmetry_node src/oodmetry_node.cpp)
-add_dependencies(oodmetry_node ${catkin_EXPORTED_TARGETS})
-target_link_libraries(oodmetry_node ${catkin_LIBRARIES})
+add_executable(node src/node.cpp)
+add_dependencies(node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(node ${catkin_LIBRARIES})
 
 
 
