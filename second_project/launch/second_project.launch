@@ -1,57 +1,27 @@
+
 <launch>
+
     <node pkg="second_project" name="odometry_node" type="node" output="screen"/>
+
 
     <node pkg="rosbag" type="play" name="rosbag" args="$(find second_project)/launch/bag.bag"/>
 
+
     <node pkg="imu_complementary_filter" name="complementary_filter" type="complementary_filter_node" output="screen">
-        <param name="do_bias_estimation" value="true"/>
-        <param name="do_adaptive_gain" value="true"/>
-        <param name="use_mag" value="false"/>
-        <param name="gain_acc" value="0.01"/>
-        <param name="gain_mag" value="0.01"/>
+        <rosparam command="load" file="$(find second_project)/params/imu_filter_params.yaml" />
         <remap from="/imu" to="/swiftnav/rear/imu"/>
     </node>
 
-    <node pkg="robot_localization" name="ekf_node" type="ekf_localization_node" clear_params="true">
-        <param name="frequency" value="30"/>
-        <param name="sensor_timeout" value="0.1"/>
-        <param name="two_d_mode" value="true"/>
-        <param name="publish_tf" value="false"/>
-    
-        <param name="map_frame" value="map"/>
-        <param name="odom_frame" value="odom"/>
-        <param name="base_link_frame" value="base_link"/>
-        <param name="world_frame" value="odom"/>
 
-        <param name="odom0" value="/car_odometry"/>
-        <rosparam param="odom0_config">[false, false, false,
-                                        false, false, false,
-                                        true,  true,  true,
-                                        false, false, false,
-                                        false, false, false]
-        </rosparam>
-        <param name="odom0_differential" value="false"/>
-        <param name="odom0_relative" value="true"/>
-        <param name="odom0_queue_size" value="10"/>
-
-        <param name="imu0" value="/swiftnav/rear/imu"/>
-        <rosparam param="imu0_config">[false, false, false,
-                                       true,  true,  true,
-                                       false, false, false,
-                                       true,  true,  false,
-                                       true,  true,  true]
-        </rosparam>
-        <param name="imu0_differential" value="false"/>
-        <param name="imu0_relative" value="false"/>
-        <param name="imu0_queue_size" value="10"/>
-
-        <param name="print_diagnostics" value="true"/>
-        <param name="debug" value="false"/>
-        <param name="debug_out_file" value="debug_ekf_localization.txt"/>
-
+    <node pkg="robot_localization" name="ekf_node_1" type="ekf_localization_node" clear_params="true">
+        <rosparam command="load" file="$(find second_project)/params/ekf_params.yaml" />
     </node>
 
    
-
+    <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" >
+    	<rosparam command="load" file="$(find second_project)/params/navsat_transform_params.yaml" />
+	<remap from="/gps/fix" to="/swiftnav/rear/gps"/>
+    <remap from="/imu/data" to="/swiftnav/rear/imu/data"/>
+    </node>
 
 </launch>

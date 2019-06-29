@@ -1,0 +1,45 @@
+﻿
+frequency: 30
+sensor_timeout: 0.1
+two_d_mode: true
+publish_tf: false
+ 
+map_frame: map
+odom_frame: odom
+base_link_frame: car_frame
+world_frame: odom
+
+odom0: /car_odometry
+odom0_config : [false, false, false,
+                false, false, false,
+                true,  true,  true,
+                false, false, false,
+                false, false, false]
+odom0_differential: false
+odom0_relative: true
+odom0_queue_size: 10
+
+odom1: /odometry/gps
+odom1_config : [false, false, false,
+                false, false, false,
+                true,  true,  true,
+                false, false, false,
+                false, false, false]
+odom1_differential: false
+odom1_relative: true
+odom1_queue_size: 10
+
+# imu0: /swiftnav/rear/imu/data
+# imu0_config: [false, false, false,
+#               true,  true,  true,
+#               false, false, false,
+#               true,  true,  false,
+#               true,  true,  true]
+# imu0_differential: false
+# imu0_relative: false
+# imu0_queue_size: 10
+# imu0_remove_gravitational_acceleration: true
+
+print_diagnostics: true
+debug: false
+debug_out_file: debug_ekf_localization.txt
