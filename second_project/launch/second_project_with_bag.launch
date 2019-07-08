@@ -3,6 +3,8 @@
 
     <node pkg="second_project" name="odometry_node" type="node" output="screen"/>
 
+    <node pkg="rosbag" type="play" name="rosbag" args="$(find second_project)/launch/bag.bag"/>
+
     <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_imu" args="0 0 0 0 0 0 base_link world"/>
     <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_gps" args="0 0 0 0 0 0 base_link gps"/>
 
