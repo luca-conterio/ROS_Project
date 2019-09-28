@@ -47,7 +47,7 @@ raw data           Filter            Filtered data
                                            │
                                            V
                         GPS  -------->  navsat  --->  Filtered
-                        data             node           gps
+                        data             node           GPS
 ```
 
 ## Parameters
