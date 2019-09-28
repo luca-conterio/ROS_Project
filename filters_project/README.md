@@ -1,7 +1,8 @@
-﻿# 
+﻿# Autonomous Car GPS Position
 Second Robotics Project - Politecnico di Milano 2018/2019  
 
 ## Overview
+The aim of this project is to compute accurate and high frequency **GPS position** fusing odometry from wheels encoders and steering angle, IMU and GPS data from the Piksi Multi board.
 
 ## Project Structure
 The project contains an "src" folder with our odometry node, a "launch" folder containing the launch file to run all the needed nodes and a "param" folder containing the configuration files for each one of the nodes.
