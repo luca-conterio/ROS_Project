@@ -6,6 +6,8 @@ The goal of this simple project is to retrieve data from a bag file recorded by 
 It uses **ROS (Robot Operating System)** to retrieve the data, to compute the odometry and to publish the results.
 
 ## Project Structure
+The project contains an `src` folder with the odometry node, a `launch` folder containing the launch file to run all the needed nodes, a `cfg` folder containing the configuration for `dynamic_reconfigure` and a `msg` folder containing the specifiation of custom messages.
+
 ```
 odom_project  
    ├── cfg  
@@ -105,7 +107,7 @@ The angular velocity is instead computed according to the selected odometry type
 
 ## Configuration and Parameters
 The `cfg` directory contains a `parameters.cfg` file with the specification of a `ParameterGenerator`.  
-It is used in the node to instantiate a `dynamice_reconfigure::Server` to allow dynamic reconfiguration of the robot position `(x,y)`.  
+It is used in the node to instantiate a `dynamic_reconfigure::Server` to allow dynamic reconfiguration of the robot position `(x,y)`.  
 Four parameters have been defined:
   * `x_pos`: it respresents the robot's x coordinate.
   * `y_pos`: it represents the robot's y coordinate.
