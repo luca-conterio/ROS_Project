@@ -34,18 +34,19 @@ The project also instantiates:
 **NOTE**: odometry is computed as in the **Ackerman** model, in the same way it is computed in the `odom_project` contained in this repo. 
 
 ```
-  IMU                IMU                  IMU  
-raw data  --->  complementary  --->  filtered data
-                    filter                 │
+   IMU    --->  Complementary  --->       IMU  
+raw data           Filter            Filtered data
+                                           │
+                                           │
+                                           │
+                                           │
+                         Extended          V
+     Odometry  -------->  Kalman  --->  Filtered 
+                          Filter        odometry
                                            │
                                            │
                                            V
-        Odometry  -------->  EKF  --->  filtered 
-                                        odometry
-                                           │
-                                           │
-                                           V
-                        gps  -------->  navsat  --->  filtered
+                        GPS  -------->  navsat  --->  Filtered
                         data             node           gps
 ```
 
