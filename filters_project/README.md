@@ -36,17 +36,17 @@ The project also instantiates:
 ```
   IMU                IMU                  IMU  
 raw data  --->  complementary  --->  filtered data
-                    filter               │
-                                         │
-                                         │
-                                         V
-      Odometry  -------->  EKF  --->  filtered 
-                                      odometry
-                                         │
-                                         │
-                                         V
-                       gps  -------->  navsat  --->  filtered
-                       data             node           gps
+                    filter                 │
+                                           │
+                                           │
+                                           V
+        Odometry  -------->  EKF  --->  filtered 
+                                        odometry
+                                           │
+                                           │
+                                           V
+                        gps  -------->  navsat  --->  filtered
+                        data             node           gps
 ```
 
 ## Parameters
