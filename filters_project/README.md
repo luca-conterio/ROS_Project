@@ -34,7 +34,7 @@ The project also instantiates:
 **NOTE**: odometry is computed as in the **Ackerman** model, in the same way it is computed in the `odom_project` contained in this repo. 
 
 ```
-   IMU    --->  Complementary  --->       IMU  
+  IMU     --->  Complementary  --->       IMU  
 raw data           Filter            Filtered data
                                            │
                                            │
