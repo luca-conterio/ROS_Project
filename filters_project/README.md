@@ -40,7 +40,7 @@ raw data  --->  complementary  --->  filtered data
                                          │
                                          │
                                          V
-	    Odometry  -------->  EKF  --->  filtered 
+      Odometry  -------->  EKF  --->  filtered 
                                       odometry
                                          │
                                          │
