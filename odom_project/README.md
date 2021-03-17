@@ -2,7 +2,7 @@
 First Robotics Project - Politecnico di Milano 2018/2019  
   
 ## Overview
-The goal of this simple project is to retrieve data from a bag file recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackerman** model.  
+The goal of this simple project is to retrieve data from a bag file recorded by sensors of an autonomous car and to compute its odometry, both using **Differential Drive** kinematics and **Ackermann** model.  
 It uses **ROS (Robot Operating System)** to retrieve the data, to compute the odometry and to publish the results.
 
 ## Project Structure
